@@ -26,7 +26,7 @@ def addCookieFromFile(driver):
 
 
 def getUpListFromFile():
-    stream = open('ups_dust.txt', 'r')
+    stream = open('prefered_ups.txt', 'r')
     data = stream.readlines()
     return data
 
@@ -83,11 +83,10 @@ def checkIfFwded(id):
 def checkIfDrawn(driver):
     first_comment = driver.find_elements(By.CLASS_NAME, "list-item")
     if not first_comment:
-        return
+        return False
     first_comment_p = first_comment[0].find_elements(By.CLASS_NAME, "text")
     if first_comment_p:
         fc = first_comment_p[0].text
-        print(fc)
         return "恭喜" in fc
     return False
 
@@ -120,12 +119,21 @@ def subscribe(driver):
         element_to_hover_over = driver.find_elements(By.CLASS_NAME, "bili-dyn-item__avatar")[0]
         hover = ActionChains(driver).move_to_element(element_to_hover_over)
         hover.perform()
-        time.sleep(2)
+        time.sleep(1)
 
         if driver.find_elements(By.CLASS_NAME, "bili-user-profile-view__info__button"):
             sub_btn = driver.find_elements(By.CLASS_NAME, "bili-user-profile-view__info__button")[0]
+            print(sub_btn.text)
             if sub_btn.text == "关注":
                 sub_btn.click()
+                time.sleep(2)
+            driver.execute_script("window.scrollTo(0, 800)") 
+            time.sleep(1)
+            driver.execute_script("window.scrollTo(0, 0)") 
+            submit = driver.find_elements(By.CLASS_NAME, "comment-submit")[0]
+            hover = ActionChains(driver).move_to_element(submit)
+            hover.perform()
+            time.sleep(1)
 
 
 def inspectReference(driver, expect_windows_num):
@@ -151,13 +159,14 @@ def inspectReference(driver, expect_windows_num):
 
     status_id = album[0].get_attribute('dyn-id')
     status_time = driver.find_elements(By.CLASS_NAME, "bili-dyn-time")[0]
-    if checkIfDrawn(driver) and checkDateDelta(status_time.text) and checkIfFwded(status_id):
+    
+    if checkDateDelta(status_time.text) and not checkIfDrawn(driver): 
+        subscribe(driver)
+        time.sleep(random.random() * 5)
+
+    if not checkIfDrawn(driver) and checkDateDelta(status_time.text) and checkIfFwded(status_id):
         forward(driver, up_name)
         storeFwdedStatus(status_id)
-
-    time.sleep(random.random() * 5)
-    if checkDateDelta(status_time.text): 
-        subscribe(driver)
 
     time.sleep(random.random() * 5)
     driver.close()

@@ -67,7 +67,7 @@ def getCandidates(driver):
 def job1():
     print (strftime("%Y-%m-%d %H:%M:%S", gmtime()))
     driver = webdriver.Chrome(options=options)
-    upList = getCandidates(driver)
+    upList = getUpListFromFile() + getCandidates(driver) 
     for up in upList: getPrizeRelatedStatus(driver, up)
 
 
@@ -78,8 +78,9 @@ def job2():
 
 
 if __name__ == "__main__":
+    job1()
     schedule.every(2).hours.do(job1)
-    schedule.every(24).hours.do(job2)
+    #schedule.every(24).hours.do(job2)
 
     while True:
         schedule.run_pending()

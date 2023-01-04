@@ -25,7 +25,7 @@ def getStatus(driver, link):
     article_items = driver.find_elements(By.CLASS_NAME, "article-item")
 
     if article_items:
-        for article_item in article_items[0]:
+        for article_item in [article_items[0]]:
             article_content = article_item.find_elements(By.CLASS_NAME, "article-con")
             if article_content and len(article_content) > 0:
                 article_content[0].click()
@@ -51,4 +51,3 @@ def getStatus(driver, link):
                 time.sleep(random.random() * 10)
                 driver.close()
                 driver.switch_to.window(original_window)   
-                    
