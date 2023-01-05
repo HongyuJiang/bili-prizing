@@ -145,9 +145,14 @@ def inspectReference(driver, expect_windows_num):
     if len(driver.window_handles) >= expect_windows_num:
         driver.switch_to.window(driver.window_handles[expect_windows_num - 1])
 
-    wait.until(
-        EC.presence_of_element_located((By.CLASS_NAME, "bili-rich-text"))
-    )
+    try:
+        wait.until(
+            EC.presence_of_element_located((By.CLASS_NAME, "bili-rich-text"))
+        )
+    except:
+        driver.close()
+        driver.switch_to.window(original_window)
+        return
 
     up_name = driver.find_elements(By.CLASS_NAME, "bili-dyn-title__text")[0].text
     album = driver.find_elements(By.CLASS_NAME, "bili-album")

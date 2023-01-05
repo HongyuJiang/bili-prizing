@@ -79,6 +79,7 @@ def job2():
 
 if __name__ == "__main__":
     job1()
+    job2()
     schedule.every(2).hours.do(job1)
     #schedule.every(24).hours.do(job2)
 
